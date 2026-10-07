@@ -42,6 +42,17 @@ public final class BlasterConfig {
     public static final ModConfigSpec.BooleanValue DRONE_TARGET_PASSIVE;
     public static final ModConfigSpec.BooleanValue DRONE_REQUIRE_AMMO;
 
+    // ---- subspace lance
+    public static final ModConfigSpec.DoubleValue LANCE_DAMAGE;
+    public static final ModConfigSpec.DoubleValue LANCE_CRATER_RADIUS;
+    public static final ModConfigSpec.IntValue LANCE_BARRAGE_COUNT;
+    public static final ModConfigSpec.DoubleValue SPACE_RADIUS;
+    public static final ModConfigSpec.IntValue SPACE_TICKS;
+    public static final ModConfigSpec.IntValue SPACE_LANCE_INTERVAL;
+    public static final ModConfigSpec.IntValue LANCE_COOLDOWN_TICKS;
+    public static final ModConfigSpec.IntValue BARRAGE_COOLDOWN_TICKS;
+    public static final ModConfigSpec.IntValue SPACE_COOLDOWN_TICKS;
+
     // ---- overclocked (super) CRT
     public static final ModConfigSpec.DoubleValue SUPER_DAMAGE;
     public static final ModConfigSpec.DoubleValue SUPER_CRATER_RADIUS;
@@ -111,6 +122,18 @@ public final class BlasterConfig {
                 .define("droneTargetPassive", false);
         DRONE_REQUIRE_AMMO = b.comment("Deploying costs one Phosphor Cell.")
                 .define("droneRequireAmmo", true);
+        b.pop();
+
+        b.comment("Subspace Lance. Basic cast is free; barrage costs 1 Phosphor Cell, Imaginary Space costs 2.").push("subspace_lance");
+        LANCE_DAMAGE = b.defineInRange("lanceDamage", 10.0D, 0.0D, 10000.0D);
+        LANCE_CRATER_RADIUS = b.defineInRange("lanceCraterRadius", 2.0D, 0.0D, 16.0D);
+        LANCE_BARRAGE_COUNT = b.comment("Lances dropped by a charged cast.").defineInRange("barrageCount", 4, 1, 16);
+        SPACE_RADIUS = b.defineInRange("imaginarySpaceRadius", 7.0D, 2.0D, 24.0D);
+        SPACE_TICKS = b.defineInRange("imaginarySpaceTicks", 100, 20, 600);
+        SPACE_LANCE_INTERVAL = b.comment("Ticks between lances falling inside Imaginary Space.").defineInRange("imaginarySpaceInterval", 4, 1, 40);
+        LANCE_COOLDOWN_TICKS = b.defineInRange("lanceCooldown", 6, 0, 200);
+        BARRAGE_COOLDOWN_TICKS = b.defineInRange("barrageCooldown", 50, 0, 1200);
+        SPACE_COOLDOWN_TICKS = b.defineInRange("imaginarySpaceCooldown", 260, 0, 6000);
         b.pop();
 
         b.comment("Overclocked CRT (super blaster).").push("overclocked");

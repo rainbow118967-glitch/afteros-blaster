@@ -16,5 +16,7 @@ public final class ClientEvents {
         event.registerEntityRenderer(AfterOSBlaster.SIGNAL_DEBRIS.get(), SignalDebrisRenderer::new);
         event.registerEntityRenderer(AfterOSBlaster.SIGNAL_BEAM.get(), SignalBeamRenderer::new);
         event.registerEntityRenderer(AfterOSBlaster.FLOATING_CRT_ENTITY.get(), FloatingCrtRenderer::new);
+        event.registerEntityRenderer(AfterOSBlaster.SUBSPACE_LANCE_ENTITY.get(), SubspaceLanceRenderer::new);
+        event.registerEntityRenderer(AfterOSBlaster.IMAGINARY_SPACE.get(), NoopRenderer::new);
     }
 }

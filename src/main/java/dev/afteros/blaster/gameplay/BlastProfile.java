@@ -78,6 +78,21 @@ public record BlastProfile(
                 true);
     }
 
+    /** Subspace Lance impact. big = every 4th basic lance (Space Core). */
+    public static BlastProfile lance(boolean big) {
+        double crater = BlasterConfig.LANCE_CRATER_RADIUS.get() * (big ? 1.7D : 1.0D);
+        return new BlastProfile(
+                (float) (BlasterConfig.LANCE_DAMAGE.get() * (big ? 1.6D : 1.0D)),
+                crater * 1.8D + 1.0D,
+                crater,
+                0.0D,
+                big ? 500 : 250,
+                big ? 30 : 14,
+                BlasterConfig.MAX_BLAST_RESISTANCE.get().floatValue(),
+                BlasterConfig.KNOCKBACK.get() * 0.7D,
+                false, false, false);
+    }
+
     /** Same blast but it never touches terrain (used when the target is right next to the owner). */
     public BlastProfile withoutTerrain() {
         return new BlastProfile(damage, damageRadius, 0.0D, 0.0D, 0, 0, resistanceCap, knockback, oneShot, bosses, big);

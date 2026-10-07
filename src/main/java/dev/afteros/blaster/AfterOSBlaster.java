@@ -1,6 +1,9 @@
 package dev.afteros.blaster;
 
 import dev.afteros.blaster.entity.FloatingCrt;
+import dev.afteros.blaster.entity.ImaginarySpace;
+import dev.afteros.blaster.entity.SubspaceLance;
+import dev.afteros.blaster.item.SubspaceLanceItem;
 import dev.afteros.blaster.entity.SignalBeam;
 import dev.afteros.blaster.entity.SignalBolt;
 import dev.afteros.blaster.entity.SignalDebris;
@@ -41,6 +44,9 @@ public class AfterOSBlaster {
     public static final DeferredItem<CrtBlasterItem> SUPER_CRT_BLASTER =
             ITEMS.registerItem("super_crt_blaster", props -> new CrtBlasterItem(props.stacksTo(1).rarity(Rarity.EPIC).fireResistant(), true));
 
+    public static final DeferredItem<SubspaceLanceItem> SUBSPACE_LANCE =
+            ITEMS.registerItem("subspace_lance", props -> new SubspaceLanceItem(props.stacksTo(1).rarity(Rarity.EPIC)));
+
     // ---- entities
     public static final DeferredHolder<EntityType<?>, EntityType<SignalBolt>> SIGNAL_BOLT = ENTITIES.register("signal_bolt",
             () -> EntityType.Builder.<SignalBolt>of(SignalBolt::new, MobCategory.MISC)
@@ -54,6 +60,13 @@ public class AfterOSBlaster {
     public static final DeferredHolder<EntityType<?>, EntityType<FloatingCrt>> FLOATING_CRT_ENTITY = ENTITIES.register("floating_crt",
             () -> EntityType.Builder.<FloatingCrt>of(FloatingCrt::new, MobCategory.MISC)
                     .noSave().sized(0.9F, 0.9F).fireImmune().clientTrackingRange(10).updateInterval(1).build("floating_crt"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SubspaceLance>> SUBSPACE_LANCE_ENTITY = ENTITIES.register("subspace_lance",
+            () -> EntityType.Builder.<SubspaceLance>of(SubspaceLance::new, MobCategory.MISC)
+                    .noSave().sized(0.4F, 0.4F).fireImmune().clientTrackingRange(10).updateInterval(1).build("subspace_lance"));
+    public static final DeferredHolder<EntityType<?>, EntityType<ImaginarySpace>> IMAGINARY_SPACE = ENTITIES.register("imaginary_space",
+            () -> EntityType.Builder.<ImaginarySpace>of(ImaginarySpace::new, MobCategory.MISC)
+                    .noSave().sized(0.2F, 0.2F).fireImmune().clientTrackingRange(10).updateInterval(20).build("imaginary_space"));
 
     // ---- sounds (mapped to vanilla sounds in sounds.json)
     public static final DeferredHolder<SoundEvent, SoundEvent> CHARGE = sound("charge");
@@ -83,6 +96,7 @@ public class AfterOSBlaster {
             event.accept(CRT_BLASTER);
             event.accept(SUPER_CRT_BLASTER);
             event.accept(FLOATING_CRT);
+            event.accept(SUBSPACE_LANCE);
             event.accept(PHOSPHOR_CELL);
         }
     }

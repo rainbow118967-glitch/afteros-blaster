@@ -57,5 +57,13 @@
   "message.afteros_blaster.super_not_charged": "OVERLOAD // Keep charging",
   "message.afteros_blaster.need_cells": "NO SIGNAL // %s Phosphor Cells required",
   "subtitles.afteros_blaster.boom": "CRT signal detonates",
-  "afteros_blaster.configuration.destroyTerrain": "Destroy terrain"
+  "afteros_blaster.configuration.destroyTerrain": "Destroy terrain",
+  "item.afteros_blaster.subspace_lance": "Subspace Lance",
+  "entity.afteros_blaster.subspace_lance": "Subspace Lance",
+  "entity.afteros_blaster.imaginary_space": "Imaginary Space",
+  "tooltip.afteros_blaster.lance.flavor": "Pulled out of Imaginary Space.",
+  "tooltip.afteros_blaster.lance.tap": "Tap right-click: throw a lance (every 4th makes a bigger Space Core burst).",
+  "tooltip.afteros_blaster.lance.hold": "Hold, then release: a barrage of lances falls on the target. 1 Phosphor Cell.",
+  "tooltip.afteros_blaster.lance.space": "Shift + right-click: open Imaginary Space. Time crawls, lances rain. 2 Phosphor Cells.",
+  "tooltip.afteros_blaster.lance.fan": "Fan-made, inspired by Honkai Impact 3rd. Original art, unofficial."
 }

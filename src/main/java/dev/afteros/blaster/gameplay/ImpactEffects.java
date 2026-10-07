@@ -258,8 +258,8 @@ public final class ImpactEffects {
             }
             level.sendParticles(ParticleTypes.ELECTRIC_SPARK, c.x, c.y + 0.5D, c.z, p.big() ? n * 4 : n, spread, spread * 0.7D, spread, 0.6D);
             level.sendParticles(ParticleTypes.END_ROD, c.x, c.y + 0.5D, c.z, n / 2, spread, spread * 0.7D, spread, 0.25D);
-            level.sendParticles(ParticleTypes.FLAME, c.x, c.y + 0.3D, c.z, n / 2, spread, spread * 0.4D, spread, 0.12D);
-            level.sendParticles(ParticleTypes.LARGE_SMOKE, c.x, c.y + 0.5D, c.z, n / 3, spread, spread * 0.5D, spread, 0.05D);
+            if (p.fireChance() > 0.0D) level.sendParticles(ParticleTypes.FLAME, c.x, c.y + 0.3D, c.z, n / 2, spread, spread * 0.4D, spread, 0.12D);
+            if (p.fireChance() > 0.0D) level.sendParticles(ParticleTypes.LARGE_SMOKE, c.x, c.y + 0.5D, c.z, n / 3, spread, spread * 0.5D, spread, 0.05D);
         }
         level.playSound(null, c.x, c.y, c.z, AfterOSBlaster.BOOM.get(), SoundSource.PLAYERS, p.big() ? 5.0F : 2.0F, p.big() ? 0.6F : 1.0F);
         level.playSound(null, c.x, c.y, c.z, AfterOSBlaster.IMPACT.get(), SoundSource.PLAYERS, p.big() ? 2.5F : 1.2F, 0.8F);
