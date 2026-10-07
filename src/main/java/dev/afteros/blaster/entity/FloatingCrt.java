@@ -17,6 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -34,6 +35,8 @@ public class FloatingCrt extends Projectile {
     // server-only state
     private int ticksLeft;
     private int cooldown = 10;
+    private int index;
+    private int count = 1;
 
     public FloatingCrt(EntityType<? extends FloatingCrt> type, Level level) {
         super(type, level);
@@ -41,9 +44,12 @@ public class FloatingCrt extends Projectile {
         this.setNoGravity(true);
     }
 
-    public static FloatingCrt deploy(ServerLevel level, ServerPlayer owner) {
+    public static FloatingCrt deploy(ServerLevel level, ServerPlayer owner, int index, int count) {
         FloatingCrt crt = new FloatingCrt(AfterOSBlaster.FLOATING_CRT_ENTITY.get(), level);
         crt.setOwner(owner);
+        crt.index = index;
+        crt.count = Math.max(1, count);
+        crt.cooldown = 5 + (index * BlasterConfig.DRONE_INTERVAL.get()) / crt.count; // stagger the squad
         crt.ticksLeft = BlasterConfig.DRONE_LIFETIME.get();
         crt.setPos(crt.hoverPosition(owner));
         crt.setYRot(owner.getYRot());
@@ -61,14 +67,21 @@ public class FloatingCrt extends Projectile {
     }
 
     private Vec3 hoverPosition(ServerPlayer owner) {
-        double yaw = Math.toRadians(owner.getYRot());
-        Vec3 forward = new Vec3(-Math.sin(yaw), 0.0D, Math.cos(yaw));
-        Vec3 right = new Vec3(-Math.cos(yaw), 0.0D, -Math.sin(yaw));
-        double bob = Math.sin(this.tickCount * 0.1D) * 0.12D;
-        return owner.position()
-                .add(right.scale(1.25D))
-                .add(forward.scale(-0.1D))
-                .add(0.0D, owner.getBbHeight() + 0.35D + bob, 0.0D);
+        if (this.count <= 1) {
+            double yaw = Math.toRadians(owner.getYRot());
+            Vec3 forward = new Vec3(-Math.sin(yaw), 0.0D, Math.cos(yaw));
+            Vec3 right = new Vec3(-Math.cos(yaw), 0.0D, -Math.sin(yaw));
+            double bob = Math.sin(this.tickCount * 0.1D) * 0.12D;
+            return owner.position()
+                    .add(right.scale(1.25D))
+                    .add(forward.scale(-0.1D))
+                    .add(0.0D, owner.getBbHeight() + 0.35D + bob, 0.0D);
+        }
+        // squad: slowly rotating ring around the owner, alternate drones sit higher
+        double angle = Math.PI * 2.0D * this.index / this.count + this.tickCount * 0.02D;
+        double radius = 2.4D + this.count * 0.08D;
+        double height = owner.getBbHeight() + 0.5D + (this.index % 2) * 0.55D + Math.sin(this.tickCount * 0.1D + this.index) * 0.12D;
+        return owner.position().add(Math.cos(angle) * radius, height, Math.sin(angle) * radius);
     }
 
     @Override
@@ -139,7 +152,7 @@ public class FloatingCrt extends Projectile {
         List<Mob> mobs = server.getEntitiesOfClass(Mob.class, this.getBoundingBox().inflate(range), m ->
                 ImpactEffects.canDamage(owner, m)
                         && !m.isInvulnerable()
-                        && (passive || m instanceof Enemy)
+                        && (passive || m instanceof Enemy || m.getTarget() instanceof Player)
                         && m.distanceToSqr(this) <= range * range
                         && hasSight(server, m));
         Mob best = null;

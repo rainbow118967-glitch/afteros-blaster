@@ -37,7 +37,10 @@ public class FloatingCrtItem extends Item {
                     owner.displayClientMessage(Component.translatable("message.afteros_blaster.no_ammo"), true);
                     return InteractionResultHolder.fail(stack);
                 }
-                server.addFreshEntity(FloatingCrt.deploy(server, owner));
+                int squad = BlasterConfig.DRONE_COUNT.get();
+                for (int i = 0; i < squad; i++) {
+                    server.addFreshEntity(FloatingCrt.deploy(server, owner, i, squad));
+                }
                 owner.displayClientMessage(Component.translatable("message.afteros_blaster.drone_deployed"), true);
             }
             owner.getCooldowns().addCooldown(this, 20);

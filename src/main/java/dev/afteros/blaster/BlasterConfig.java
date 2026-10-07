@@ -35,6 +35,7 @@ public final class BlasterConfig {
     // ---- floating CRT
     public static final ModConfigSpec.DoubleValue DRONE_DAMAGE;
     public static final ModConfigSpec.DoubleValue DRONE_CRATER_RADIUS;
+    public static final ModConfigSpec.IntValue DRONE_COUNT;
     public static final ModConfigSpec.IntValue DRONE_INTERVAL;
     public static final ModConfigSpec.DoubleValue DRONE_RANGE;
     public static final ModConfigSpec.IntValue DRONE_LIFETIME;
@@ -99,12 +100,15 @@ public final class BlasterConfig {
         b.comment("Floating CRT (hovering turret that targets every mob).").push("floating_crt");
         DRONE_DAMAGE = b.defineInRange("droneDamage", 10.0D, 0.0D, 10000.0D);
         DRONE_CRATER_RADIUS = b.defineInRange("droneCraterRadius", 2.5D, 0.0D, 16.0D);
-        DRONE_INTERVAL = b.comment("Ticks between shots.").defineInRange("droneInterval", 22, 4, 400);
+        DRONE_COUNT = b.comment("How many Floating CRTs one deployment creates.")
+                .defineInRange("droneCount", 16, 1, 40);
+        DRONE_INTERVAL = b.comment("Ticks between shots PER drone (shots are staggered across the squad).")
+                .defineInRange("droneInterval", 40, 4, 400);
         DRONE_RANGE = b.defineInRange("droneRange", 28.0D, 4.0D, 96.0D);
         DRONE_LIFETIME = b.comment("Ticks a deployed Floating CRT stays online (2400 = 2 minutes).")
                 .defineInRange("droneLifetime", 2400, 100, 1728000);
-        DRONE_TARGET_PASSIVE = b.comment("If false, the drone only targets hostile mobs.")
-                .define("droneTargetPassive", true);
+        DRONE_TARGET_PASSIVE = b.comment("false = only hostile mobs and mobs currently targeting a player. true = every mob.")
+                .define("droneTargetPassive", false);
         DRONE_REQUIRE_AMMO = b.comment("Deploying costs one Phosphor Cell.")
                 .define("droneRequireAmmo", true);
         b.pop();
