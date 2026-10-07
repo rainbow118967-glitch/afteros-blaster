@@ -1,0 +1,80 @@
+{
+  "charge": {
+    "subtitle": "subtitles.afteros_blaster.charge",
+    "sounds": [
+      {
+        "name": "minecraft:block.respawn_anchor.charge",
+        "type": "event",
+        "volume": 0.65,
+        "pitch": 1.5
+      }
+    ]
+  },
+  "fire": {
+    "subtitle": "subtitles.afteros_blaster.fire",
+    "sounds": [
+      {
+        "name": "minecraft:entity.warden.sonic_boom",
+        "type": "event",
+        "volume": 0.9,
+        "pitch": 1.4
+      }
+    ]
+  },
+  "impact": {
+    "subtitle": "subtitles.afteros_blaster.impact",
+    "sounds": [
+      {
+        "name": "minecraft:block.amethyst_block.break",
+        "type": "event",
+        "volume": 1.0,
+        "pitch": 0.6
+      },
+      {
+        "name": "minecraft:block.glass.break",
+        "type": "event",
+        "volume": 0.75,
+        "pitch": 0.7
+      }
+    ]
+  },
+  "debris_hiss": {
+    "subtitle": "subtitles.afteros_blaster.debris_hiss",
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.power_select",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 1.8
+      }
+    ]
+  },
+  "boom": {
+    "subtitle": "subtitles.afteros_blaster.boom",
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.explode",
+        "type": "event",
+        "volume": 1.0,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "super_fire": {
+    "subtitle": "subtitles.afteros_blaster.fire",
+    "sounds": [
+      {
+        "name": "minecraft:entity.warden.sonic_boom",
+        "type": "event",
+        "volume": 1.0,
+        "pitch": 0.6
+      },
+      {
+        "name": "minecraft:entity.lightning_bolt.thunder",
+        "type": "event",
+        "volume": 0.8,
+        "pitch": 1.2
+      }
+    ]
+  }
+}

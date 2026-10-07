@@ -1,0 +1,23 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT"
+
+[[mods]]
+modId="afteros_blaster"
+version="1.1.0"
+displayName="AfterOS // CRT Blaster"
+description='''An original fan-inspired CRT energy arsenal: phosphor blasts that really crater the ground, a floating CRT turret that targets every mob, and an overclocked super blaster. Inspired by Plana HV's AfterOS; unofficial and unaffiliated.'''
+
+[[dependencies.afteros_blaster]]
+modId="neoforge"
+type="required"
+versionRange="[21.1.0,21.2)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.afteros_blaster]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1]"
+ordering="NONE"
+side="BOTH"
