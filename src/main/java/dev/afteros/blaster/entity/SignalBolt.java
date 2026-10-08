@@ -28,15 +28,26 @@ public class SignalBolt extends Projectile {
         this.setNoGravity(true);
     }
 
+    private int maxAge = 120;
+
     public SignalBolt(ServerLevel level, LivingEntity owner, float power) {
+        this(level, owner, power, owner.getLookAngle());
+    }
+
+    public SignalBolt(ServerLevel level, LivingEntity owner, float power, Vec3 dir) {
         this(AfterOSBlaster.SIGNAL_BOLT.get(), level);
         this.setOwner(owner);
         this.entityData.set(POWER, power);
-        Vec3 dir = owner.getLookAngle();
         this.setPos(owner.getEyePosition().add(dir.scale(0.8D)).add(0.0D, -0.2D, 0.0D));
         this.setDeltaMovement(dir.scale(BlasterConfig.PROJECTILE_SPEED.get()));
         this.setYRot(owner.getYRot());
         this.setXRot(owner.getXRot());
+    }
+
+    /** Server-side range limit in ticks (scatter shots use a short one). */
+    public SignalBolt withMaxAge(int ticks) {
+        this.maxAge = ticks;
+        return this;
     }
 
     @Override
@@ -53,7 +64,7 @@ public class SignalBolt extends Projectile {
         super.tick();
         Vec3 motion = this.getDeltaMovement();
         if (!this.level().isClientSide) {
-            if (this.tickCount > 120 || !this.level().hasChunkAt(this.blockPosition())) {
+            if (this.tickCount > this.maxAge || !this.level().hasChunkAt(this.blockPosition())) {
                 this.discard();
                 return;
             }

@@ -70,8 +70,12 @@ public class SubspaceLanceItem extends Item {
 
     @Override
     public void onUseTick(Level level, LivingEntity user, ItemStack stack, int remaining) {
+        int charged = getUseDuration(stack, user) - remaining;
+        if (!level.isClientSide && user instanceof ServerPlayer sp && charged % 4 == 0) {
+            CrtBlasterItem.meter(sp, charged >= 25 ? "BARRAGE" : "LANCE", Math.min(charged, 25), 25,
+                    ChatFormatting.LIGHT_PURPLE, CrtBlasterItem.countCells(sp), "");
+        }
         if (level.isClientSide) {
-            int charged = getUseDuration(stack, user) - remaining;
             if (charged > 10) {
                 Vec3 p = user.getEyePosition().add(user.getLookAngle().scale(1.2D));
                 level.addParticle(ParticleTypes.REVERSE_PORTAL, p.x, p.y - 0.4D, p.z, 0.0D, 0.0D, 0.0D);

@@ -34,6 +34,8 @@ public class SignalBeam extends Projectile {
             SynchedEntityData.defineId(SignalBeam.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> END_Z =
             SynchedEntityData.defineId(SignalBeam.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> STYLE =
+            SynchedEntityData.defineId(SignalBeam.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DURATION =
             SynchedEntityData.defineId(SignalBeam.class, EntityDataSerializers.INT);
 
@@ -53,6 +55,7 @@ public class SignalBeam extends Projectile {
         SignalBeam beam = new SignalBeam(AfterOSBlaster.SIGNAL_BEAM.get(), level);
         beam.setOwner(owner);
         beam.superBeam = superBeam;
+        beam.entityData.set(STYLE, superBeam ? 1 : 0);
         beam.entityData.set(POWER, power);
         beam.entityData.set(DURATION, duration);
         beam.setPos(muzzle(owner, owner.getLookAngle()));
@@ -60,10 +63,11 @@ public class SignalBeam extends Projectile {
     }
 
     /** Short decorative line from a to b. Does no damage by itself. */
-    public static SignalBeam visual(ServerLevel level, LivingEntity owner, Vec3 from, Vec3 to, float power, int duration) {
+    public static SignalBeam visual(ServerLevel level, LivingEntity owner, Vec3 from, Vec3 to, float power, int duration, int style) {
         SignalBeam beam = new SignalBeam(AfterOSBlaster.SIGNAL_BEAM.get(), level);
         beam.setOwner(owner);
         beam.visualOnly = true;
+        beam.entityData.set(STYLE, style);
         beam.entityData.set(POWER, power);
         beam.entityData.set(DURATION, duration);
         beam.setPos(from);
@@ -78,6 +82,7 @@ public class SignalBeam extends Projectile {
         builder.define(END_Y, 0.0F);
         builder.define(END_Z, 0.0F);
         builder.define(DURATION, 20);
+        builder.define(STYLE, 0);
     }
 
     private void setEnd(Vec3 offset) {
@@ -92,6 +97,11 @@ public class SignalBeam extends Projectile {
 
     public float getPower() {
         return this.entityData.get(POWER);
+    }
+
+    /** 0 = cyan, 1 = overclocked (red), 2 = floating CRT (green). */
+    public int getStyle() {
+        return this.entityData.get(STYLE);
     }
 
     public int getDuration() {
@@ -156,6 +166,9 @@ public class SignalBeam extends Projectile {
         // the ground where it lands
         if (blockHit && server.hasChunkAt(hit.getBlockPos())) {
             ImpactEffects.blast(server, end.subtract(look.scale(0.1D)), owner, this, profile);
+            if (this.superBeam && ((this.tickCount - 1) / interval) % 2 == 0 && BlasterConfig.SUPER_LIGHTNING.get()) {
+                ImpactEffects.flash(server, end);
+            }
         }
     }
 

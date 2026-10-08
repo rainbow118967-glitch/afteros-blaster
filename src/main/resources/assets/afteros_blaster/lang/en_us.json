@@ -8,7 +8,7 @@
   "tooltip.afteros_blaster.crt_blaster.flavor": "NO SIGNAL? MAKE ONE.",
   "tooltip.afteros_blaster.crt_blaster.charge": "Hold use to charge; release to transmit.",
   "tooltip.afteros_blaster.crt_blaster.mode": "Signal mode: %s",
-  "tooltip.afteros_blaster.crt_blaster.switch_mode": "Shift + right-click to change signal mode",
+  "tooltip.afteros_blaster.crt_blaster.switch_mode": "Shift + right-click: cycle Bolt / Beam / Scatter.",
   "mode.afteros_blaster.bolt": "AFTER // Signal Bolt",
   "mode.afteros_blaster.beam": "GASTER // Phosphor Beam",
   "message.afteros_blaster.mode": "SIGNAL ROUTED // %s",
@@ -65,5 +65,11 @@
   "tooltip.afteros_blaster.lance.tap": "Tap right-click: throw a lance (every 4th makes a bigger Space Core burst).",
   "tooltip.afteros_blaster.lance.hold": "Hold, then release: a barrage of lances falls on the target. 1 Phosphor Cell.",
   "tooltip.afteros_blaster.lance.space": "Shift + right-click: open Imaginary Space. Time crawls, lances rain. 2 Phosphor Cells.",
-  "tooltip.afteros_blaster.lance.fan": "Fan-made, inspired by Honkai Impact 3rd. Original art, unofficial."
+  "tooltip.afteros_blaster.lance.fan": "Fan-made, inspired by Honkai Impact 3rd. Original art, unofficial.",
+  "mode.afteros_blaster.scatter": "Scatter",
+  "mode.afteros_blaster.drone_guard": "Guard (hostile mobs only)",
+  "mode.afteros_blaster.drone_hunt": "Hunt (every mob)",
+  "mode.afteros_blaster.drone_hold": "Hold fire",
+  "message.afteros_blaster.drone_mode": "FLOATING CRT // MODE: %s",
+  "tooltip.afteros_blaster.floating.mode": "Shift + right-click: cycle Guard / Hunt / Hold fire."
 }

@@ -4,7 +4,10 @@ import dev.afteros.blaster.AfterOSBlaster;
 import dev.afteros.blaster.BlasterConfig;
 import dev.afteros.blaster.gameplay.BlastProfile;
 import dev.afteros.blaster.gameplay.ImpactEffects;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -32,10 +35,16 @@ public class FloatingCrt extends Projectile {
     private static final EntityDataAccessor<Integer> FIRE_AGE =
             SynchedEntityData.defineId(FloatingCrt.class, EntityDataSerializers.INT);
 
+    /** Mob id -> game time a drone last claimed it, so the squad spreads its fire. */
+    private static final Map<UUID, Long> CLAIMS = new HashMap<>();
+
     // server-only state
     private int ticksLeft;
     private int cooldown = 10;
     private int index;
+    private int mode; // 0 guard (hostile only), 1 hunt (every mob), 2 hold fire
+    private Vec3 engagePoint = Vec3.ZERO;
+    private int engageTicks;
     private int count = 1;
 
     public FloatingCrt(EntityType<? extends FloatingCrt> type, Level level) {
@@ -44,10 +53,11 @@ public class FloatingCrt extends Projectile {
         this.setNoGravity(true);
     }
 
-    public static FloatingCrt deploy(ServerLevel level, ServerPlayer owner, int index, int count) {
+    public static FloatingCrt deploy(ServerLevel level, ServerPlayer owner, int index, int count, int mode) {
         FloatingCrt crt = new FloatingCrt(AfterOSBlaster.FLOATING_CRT_ENTITY.get(), level);
         crt.setOwner(owner);
         crt.index = index;
+        crt.mode = mode;
         crt.count = Math.max(1, count);
         crt.cooldown = 5 + (index * BlasterConfig.DRONE_INTERVAL.get()) / crt.count; // stagger the squad
         crt.ticksLeft = BlasterConfig.DRONE_LIFETIME.get();
@@ -59,6 +69,14 @@ public class FloatingCrt extends Projectile {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(FIRE_AGE, 100);
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
+
+    public int getMode() {
+        return this.mode;
     }
 
     /** Ticks since the last shot, capped at 100 (used by the renderer for recoil). */
@@ -77,10 +95,16 @@ public class FloatingCrt extends Projectile {
                     .add(forward.scale(-0.1D))
                     .add(0.0D, owner.getBbHeight() + 0.35D + bob, 0.0D);
         }
-        // squad: slowly rotating ring around the owner, alternate drones sit higher
-        double angle = Math.PI * 2.0D * this.index / this.count + this.tickCount * 0.02D;
-        double radius = 2.4D + this.count * 0.08D;
-        double height = owner.getBbHeight() + 0.5D + (this.index % 2) * 0.55D + Math.sin(this.tickCount * 0.1D + this.index) * 0.12D;
+        // squad: rings of 8 around the owner, alternate rings spin the other way
+        int ringSize = 8;
+        int ring = this.index / ringSize;
+        int inRing = Math.max(1, Math.min(ringSize, this.count - ring * ringSize));
+        int slot = this.index % ringSize;
+        double spin = (ring % 2 == 0 ? 1.0D : -1.0D) * this.tickCount * 0.02D;
+        double angle = Math.PI * 2.0D * slot / inRing + spin + ring * 0.4D;
+        double radius = 2.3D + ring * 1.2D;
+        double height = owner.getBbHeight() + 0.5D + ring * 0.45D + (slot % 2) * 0.4D
+                + Math.sin(this.tickCount * 0.1D + this.index) * 0.12D;
         return owner.position().add(Math.cos(angle) * radius, height, Math.sin(angle) * radius);
     }
 
@@ -117,6 +141,14 @@ public class FloatingCrt extends Projectile {
 
         // hover beside the owner
         Vec3 want = hoverPosition(owner);
+        if (this.engageTicks > 0) { // swing out toward whatever we just shot, to get a better angle
+            this.engageTicks--;
+            Vec3 toward = this.engagePoint.subtract(owner.position());
+            double len = toward.length();
+            if (len > 0.5D) {
+                want = want.add(toward.scale(Math.min(4.0D, len * 0.35D) / len));
+            }
+        }
         Vec3 delta = want.subtract(this.position());
         if (delta.lengthSqr() > 32.0D * 32.0D) {
             this.setPos(want);
@@ -128,7 +160,7 @@ public class FloatingCrt extends Projectile {
         // pick a target and shoot
         Mob target = null;
         if (--this.cooldown <= 0) {
-            target = findTarget(server, owner);
+            target = this.mode == 2 ? null : findTarget(server, owner);
             if (target != null) {
                 fireAt(server, owner, target);
                 this.cooldown = BlasterConfig.DRONE_INTERVAL.get();
@@ -148,23 +180,47 @@ public class FloatingCrt extends Projectile {
 
     private Mob findTarget(ServerLevel server, ServerPlayer owner) {
         double range = BlasterConfig.DRONE_RANGE.get();
-        boolean passive = BlasterConfig.DRONE_TARGET_PASSIVE.get();
+        boolean passive = this.mode == 1;
         List<Mob> mobs = server.getEntitiesOfClass(Mob.class, this.getBoundingBox().inflate(range), m ->
                 ImpactEffects.canDamage(owner, m)
                         && !m.isInvulnerable()
                         && (passive || m instanceof Enemy || m.getTarget() instanceof Player)
                         && m.distanceToSqr(this) <= range * range
-                        && hasSight(server, m));
+                        && hasSight(server, m)
+                        && !ownerInLine(owner, m));
+        long now = server.getGameTime();
         Mob best = null;
         double bestScore = Double.MAX_VALUE;
         for (Mob mob : mobs) {
             double score = mob.distanceToSqr(this) + (mob instanceof Enemy ? 0.0D : 400.0D); // hostiles first
+            Long claimed = CLAIMS.get(mob.getUUID());
+            if (claimed != null && now - claimed < 14L) {
+                score += 1500.0D; // another drone just fired at this one
+            }
+            if (mob.getTarget() == owner) {
+                score -= 300.0D; // defend the owner first
+            } else if (mob.getTarget() instanceof Player) {
+                score -= 100.0D;
+            }
             if (score < bestScore) {
                 bestScore = score;
                 best = mob;
             }
         }
+        if (best != null) {
+            CLAIMS.put(best.getUUID(), now);
+            if (CLAIMS.size() > 512) {
+                CLAIMS.values().removeIf(t -> now - t > 40L);
+            }
+        }
         return best;
+    }
+
+    /** Never shoot through the owner. */
+    private boolean ownerInLine(ServerPlayer owner, Mob mob) {
+        Vec3 from = this.position().add(0.0D, this.getBbHeight() * 0.5D, 0.0D);
+        Vec3 to = mob.getBoundingBox().getCenter();
+        return owner.getBoundingBox().inflate(0.25D).clip(from, to).isPresent();
     }
 
     private boolean hasSight(ServerLevel server, Mob mob) {
@@ -177,7 +233,7 @@ public class FloatingCrt extends Projectile {
     private void fireAt(ServerLevel server, ServerPlayer owner, Mob target) {
         Vec3 muzzle = this.position().add(0.0D, this.getBbHeight() * 0.5D, 0.0D);
         Vec3 aim = target.getBoundingBox().getCenter();
-        server.addFreshEntity(SignalBeam.visual(server, owner, muzzle, aim, 1.0F, 8));
+        server.addFreshEntity(SignalBeam.visual(server, owner, muzzle, aim, 1.0F, 8, 2));
 
         BlastProfile profile = BlastProfile.drone();
         if (target.distanceToSqr(owner) < 3.5D * 3.5D) {
@@ -187,6 +243,8 @@ public class FloatingCrt extends Projectile {
 
         server.playSound(null, this.getX(), this.getY(), this.getZ(), AfterOSBlaster.FIRE.get(), SoundSource.PLAYERS, 0.9F, 1.5F);
         this.entityData.set(FIRE_AGE, 0);
+        this.engagePoint = target.position();
+        this.engageTicks = 20;
     }
 
     @Override

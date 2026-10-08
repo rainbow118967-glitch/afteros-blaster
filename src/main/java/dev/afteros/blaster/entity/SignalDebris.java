@@ -55,6 +55,9 @@ public class SignalDebris extends Entity {
     @Override
     public void tick() {
         super.tick();
+        if (this.level().isClientSide && !this.onGround() && this.tickCount < 40 && this.tickCount % 3 == 0) {
+            this.level().addParticle(net.minecraft.core.particles.ParticleTypes.SMOKE, this.getX(), this.getY() + 0.25D, this.getZ(), 0.0D, 0.0D, 0.0D);
+        }
         if (!this.level().isClientSide && (hasExpired() || this.getY() < this.level().getMinBuildHeight())) {
             this.discard();
             return;

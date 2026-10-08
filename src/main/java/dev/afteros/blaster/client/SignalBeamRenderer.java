@@ -18,7 +18,14 @@ import org.joml.Quaternionf;
 
 /** Two crossed, layered quads from the entity position to its synced end point. */
 public class SignalBeamRenderer extends EntityRenderer<SignalBeam> {
-    private static final ResourceLocation TEXTURE = AfterOSBlaster.id("textures/entity/signal_beam.png");
+    private static final ResourceLocation[] TEXTURES = {
+            AfterOSBlaster.id("textures/entity/signal_beam.png"),
+            AfterOSBlaster.id("textures/entity/signal_beam_super.png"),
+            AfterOSBlaster.id("textures/entity/signal_beam_drone.png")};
+
+    private static ResourceLocation textureFor(SignalBeam beam) {
+        return TEXTURES[Mth.clamp(beam.getStyle(), 0, TEXTURES.length - 1)];
+    }
 
     public SignalBeamRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -48,7 +55,7 @@ public class SignalBeamRenderer extends EntityRenderer<SignalBeam> {
         pose.pushPose();
         pose.mulPose(new Quaternionf().rotationTo(0.0F, 1.0F, 0.0F,
                 (float) (offset.x / length), (float) (offset.y / length), (float) (offset.z / length)));
-        VertexConsumer consumer = buffers.getBuffer(RenderType.entityTranslucent(TEXTURE));
+        VertexConsumer consumer = buffers.getBuffer(RenderType.entityTranslucent(textureFor(beam)));
         float scroll = -age * 0.15F;
         layer(consumer, pose.last(), half * 2.4F, (float) length, (int) (90 * fade), scroll);
         layer(consumer, pose.last(), half * 1.3F, (float) length, (int) (170 * fade), scroll);
@@ -83,6 +90,6 @@ public class SignalBeamRenderer extends EntityRenderer<SignalBeam> {
 
     @Override
     public ResourceLocation getTextureLocation(SignalBeam beam) {
-        return TEXTURE;
+        return textureFor(beam);
     }
 }

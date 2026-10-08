@@ -20,12 +20,16 @@ public final class BlasterConfig {
     public static final ModConfigSpec.DoubleValue KNOCKBACK;
     public static final ModConfigSpec.BooleanValue REQUIRE_AMMO;
     public static final ModConfigSpec.BooleanValue HURT_PLAYERS;
+    public static final ModConfigSpec.BooleanValue HEAT_ENABLED;
+    public static final ModConfigSpec.IntValue HEAT_COOL_PER_SECOND;
 
     // ---- terrain / effects
     public static final ModConfigSpec.BooleanValue DESTROY_TERRAIN;
     public static final ModConfigSpec.IntValue MAX_BLOCKS_PER_BLAST;
     public static final ModConfigSpec.DoubleValue MAX_BLAST_RESISTANCE;
     public static final ModConfigSpec.DoubleValue FIRE_CHANCE;
+    public static final ModConfigSpec.BooleanValue SCORCH_GROUND;
+    public static final ModConfigSpec.BooleanValue CAMERA_SHAKE;
     public static final ModConfigSpec.BooleanValue ENABLE_DEBRIS;
     public static final ModConfigSpec.IntValue DEBRIS_PER_IMPACT;
     public static final ModConfigSpec.IntValue MAX_ACTIVE_DEBRIS;
@@ -65,6 +69,7 @@ public final class BlasterConfig {
     public static final ModConfigSpec.IntValue SUPER_DEBRIS;
     public static final ModConfigSpec.DoubleValue SUPER_FIRE_CHANCE;
     public static final ModConfigSpec.BooleanValue SUPER_ONE_SHOT_BOSSES;
+    public static final ModConfigSpec.BooleanValue SUPER_LIGHTNING;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -84,6 +89,10 @@ public final class BlasterConfig {
         KNOCKBACK = b.defineInRange("knockback", 1.2D, 0.0D, 10.0D);
         REQUIRE_AMMO = b.comment("Consume Phosphor Cells (creative mode never consumes).")
                 .define("requireAmmo", true);
+        HEAT_ENABLED = b.comment("Each CRT Blaster shot adds heat; at 100% it overheats and locks for a few seconds.")
+                .define("heatEnabled", true);
+        HEAT_COOL_PER_SECOND = b.comment("Heat points lost per second (shots add roughly 15-35).")
+                .defineInRange("heatCoolPerSecond", 12, 1, 200);
         HURT_PLAYERS = b.comment("Player damage still respects server PVP and teams.")
                 .define("hurtPlayers", false);
         b.pop();
@@ -98,6 +107,10 @@ public final class BlasterConfig {
                 .defineInRange("maxBlastResistance", 100.0D, 0.0D, 3600000.0D);
         FIRE_CHANCE = b.comment("Chance that each exposed crater-floor block gets set on fire.")
                 .defineInRange("fireChance", 0.35D, 0.0D, 1.0D);
+        CAMERA_SHAKE = b.comment("Big blasts jolt the camera of nearby players (uses the vanilla hurt tilt, no damage).")
+                .define("cameraShake", true);
+        SCORCH_GROUND = b.comment("Crater floors get scorched: dirt becomes coarse dirt, sand becomes glass, stone becomes blackstone (magma for super blasts).")
+                .define("scorchGround", true);
         ENABLE_DEBRIS = b.comment("Flying block debris. Debris is visual only: it cannot place blocks or drop items.")
                 .define("enableDebris", true);
         DEBRIS_PER_IMPACT = b.defineInRange("debrisPerImpact", 48, 0, 1000);
@@ -149,6 +162,8 @@ public final class BlasterConfig {
                 .defineInRange("superMaxBlocks", 5000, 0, 60000);
         SUPER_DEBRIS = b.defineInRange("superDebris", 240, 0, 2000);
         SUPER_FIRE_CHANCE = b.defineInRange("superFireChance", 0.6D, 0.0D, 1.0D);
+        SUPER_LIGHTNING = b.comment("Harmless visual lightning where the super beam lands.")
+                .define("superLightning", true);
         SUPER_ONE_SHOT_BOSSES = b.comment("If true the Ender Dragon and Wither are force-killed too.")
                 .define("oneShotBosses", false);
         b.pop();

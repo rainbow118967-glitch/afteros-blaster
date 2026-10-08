@@ -11,6 +11,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -86,7 +91,9 @@ public final class ImpactEffects {
         if (p.oneShot() && target.isAlive() && (!boss || p.bosses())) {
             target.kill();
         }
-        if (!target.isAlive()) {
+        boolean killed = !target.isAlive();
+        feedback(level, owner, target, killed);
+        if (killed) {
             return;
         }
         Vec3 away = target.position().subtract(origin);
@@ -129,6 +136,11 @@ public final class ImpactEffects {
         // 3) blocks fly
         if (!removed.isEmpty()) {
             launchDebris(level, center, removed, p, rnd);
+        }
+
+        // 3b) scorched ground
+        if (!removed.isEmpty()) {
+            scorch(level, removed, p, rnd);
         }
 
         // 4) fire on the crater floor
@@ -246,6 +258,68 @@ public final class ImpactEffects {
         }
     }
 
+    private static void scorch(ServerLevel level, List<Removed> removed, BlastProfile p, RandomSource rnd) {
+        if (!BlasterConfig.SCORCH_GROUND.get()) {
+            return;
+        }
+        double chance = p.big() ? 0.5D : 0.3D;
+        for (Removed r : removed) {
+            if (rnd.nextDouble() > chance || !level.getBlockState(r.pos()).isAir()) {
+                continue;
+            }
+            BlockPos below = r.pos().below();
+            BlockState s = level.getBlockState(below);
+            if (s.hasBlockEntity()) {
+                continue;
+            }
+            BlockState to = null;
+            if (s.is(BlockTags.DIRT)) {
+                to = Blocks.COARSE_DIRT.defaultBlockState();
+            } else if (s.is(BlockTags.SAND)) {
+                to = Blocks.GLASS.defaultBlockState();
+            } else if (s.is(BlockTags.BASE_STONE_OVERWORLD)) {
+                to = p.big() && rnd.nextInt(3) == 0 ? Blocks.MAGMA_BLOCK.defaultBlockState() : Blocks.BLACKSTONE.defaultBlockState();
+            }
+            if (to != null) {
+                level.setBlock(below, to, Block.UPDATE_CLIENTS);
+            }
+        }
+    }
+
+    /** Hit-marker ping for the shooter and a spark burst on kills. */
+    private static void feedback(ServerLevel level, LivingEntity owner, LivingEntity target, boolean killed) {
+        if (owner instanceof ServerPlayer shooter) {
+            shooter.playNotifySound(AfterOSBlaster.IMPACT.get(), SoundSource.PLAYERS, killed ? 0.7F : 0.3F, killed ? 2.0F : 1.7F);
+        }
+        if (killed) {
+            level.sendParticles(ParticleTypes.ELECTRIC_SPARK, target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ(),
+                    18, 0.4D, 0.4D, 0.4D, 0.4D);
+        }
+    }
+
+    /** Jolts nearby cameras with the vanilla hurt tilt (no damage, no custom networking). */
+    private static void shake(ServerLevel level, Vec3 c, BlastProfile p) {
+        if (!BlasterConfig.CAMERA_SHAKE.get() || !(p.big() || p.craterRadius() >= 3.0D)) {
+            return;
+        }
+        double range = p.big() ? 40.0D : 14.0D;
+        for (ServerPlayer near : level.players()) {
+            if (near.distanceToSqr(c) <= range * range) {
+                near.connection.send(new ClientboundHurtAnimationPacket(near.getId(), level.getRandom().nextFloat() * 360.0F));
+            }
+        }
+    }
+
+    /** Harmless lightning for drama. */
+    public static void flash(ServerLevel level, Vec3 at) {
+        LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level);
+        if (bolt != null) {
+            bolt.moveTo(at.x, at.y, at.z);
+            bolt.setVisualOnly(true);
+            level.addFreshEntity(bolt);
+        }
+    }
+
     // ------------------------------------------------------------------ fx
 
     private static void effects(ServerLevel level, Vec3 c, BlastProfile p) {
@@ -260,6 +334,23 @@ public final class ImpactEffects {
             level.sendParticles(ParticleTypes.END_ROD, c.x, c.y + 0.5D, c.z, n / 2, spread, spread * 0.7D, spread, 0.25D);
             if (p.fireChance() > 0.0D) level.sendParticles(ParticleTypes.FLAME, c.x, c.y + 0.3D, c.z, n / 2, spread, spread * 0.4D, spread, 0.12D);
             if (p.fireChance() > 0.0D) level.sendParticles(ParticleTypes.LARGE_SMOKE, c.x, c.y + 0.5D, c.z, n / 3, spread, spread * 0.5D, spread, 0.05D);
+        }
+        shake(level, c, p);
+        if (n > 0) {
+            level.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, c.x, c.y + 0.4D, c.z, Math.max(2, n / 4), spread, spread * 0.3D, spread, 0.02D);
+        }
+        if (n > 0) {
+            // expanding shockwave ring
+            int ring = p.big() ? 72 : 28;
+            double ringSpeed = 0.35D + p.craterRadius() * 0.06D;
+            for (int i = 0; i < ring; i++) {
+                double a = Math.PI * 2.0D * i / ring;
+                level.sendParticles(ParticleTypes.CLOUD, c.x + Math.cos(a) * 0.5D, c.y + 0.3D, c.z + Math.sin(a) * 0.5D,
+                        0, Math.cos(a), 0.04D, Math.sin(a), ringSpeed);
+            }
+            if (p.big()) {
+                level.sendParticles(ParticleTypes.FLASH, c.x, c.y + 1.0D, c.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            }
         }
         level.playSound(null, c.x, c.y, c.z, AfterOSBlaster.BOOM.get(), SoundSource.PLAYERS, p.big() ? 5.0F : 2.0F, p.big() ? 0.6F : 1.0F);
         level.playSound(null, c.x, c.y, c.z, AfterOSBlaster.IMPACT.get(), SoundSource.PLAYERS, p.big() ? 2.5F : 1.2F, 0.8F);

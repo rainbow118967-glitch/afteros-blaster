@@ -139,6 +139,14 @@ public class SubspaceLance extends Projectile {
         int n = isCore() ? 60 : 24;
         server.sendParticles(ParticleTypes.PORTAL, center.x, center.y + 0.5D, center.z, n, 0.8D, 0.8D, 0.8D, 0.6D);
         server.sendParticles(ParticleTypes.REVERSE_PORTAL, center.x, center.y + 0.5D, center.z, n, 0.6D, 0.6D, 0.6D, 0.2D);
+        if (isCore() && owner != null) { // Space Core: a few more lances rain on the same spot
+            for (int i = 0; i < 3; i++) {
+                double a = server.getRandom().nextDouble() * Math.PI * 2.0D;
+                double r = 1.5D + server.getRandom().nextDouble() * 2.5D;
+                Vec3 point = new Vec3(center.x + Math.cos(a) * r, center.y, center.z + Math.sin(a) * r);
+                server.addFreshEntity(SubspaceLance.skyfall(server, owner, point, 8 + i * 4));
+            }
+        }
         this.discard();
     }
 
