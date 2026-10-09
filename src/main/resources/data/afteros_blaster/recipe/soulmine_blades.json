@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NEN",
+    "PCP",
+    " R "
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "E": {
+      "item": "minecraft:echo_shard"
+    },
+    "P": {
+      "item": "minecraft:diamond_pickaxe"
+    },
+    "C": {
+      "item": "minecraft:chain"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "id": "afteros_blaster:soulmine_blades",
+    "count": 1
+  }
+}

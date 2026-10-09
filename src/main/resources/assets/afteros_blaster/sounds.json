@@ -76,5 +76,146 @@
         "pitch": 1.2
       }
     ]
+  },
+  "chain_swing": {
+    "subtitle": "subtitles.afteros_blaster.chain_swing",
+    "sounds": [
+      {
+        "name": "afteros_blaster:chain_swing",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "chain_throw": {
+    "subtitle": "subtitles.afteros_blaster.chain_throw",
+    "sounds": [
+      {
+        "name": "afteros_blaster:chain_throw",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "chain_return": {
+    "subtitle": "subtitles.afteros_blaster.chain_return",
+    "sounds": [
+      {
+        "name": "afteros_blaster:chain_return",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "soul_impact": {
+    "subtitle": "subtitles.afteros_blaster.soul_impact",
+    "sounds": [
+      "afteros_blaster:soul_impact"
+    ]
+  },
+  "soul_charge": {
+    "subtitle": "subtitles.afteros_blaster.soul_charge",
+    "sounds": [
+      {
+        "name": "afteros_blaster:soul_charge",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "soul_slam": {
+    "subtitle": "subtitles.afteros_blaster.soul_slam",
+    "sounds": [
+      {
+        "name": "afteros_blaster:soul_slam",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "block_launch": {
+    "subtitle": "subtitles.afteros_blaster.block_launch",
+    "sounds": [
+      {
+        "name": "afteros_blaster:block_launch",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "force_grab": {
+    "subtitle": "subtitles.afteros_blaster.force_grab",
+    "sounds": [
+      {
+        "name": "afteros_blaster:force_grab",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "force_push": {
+    "subtitle": "subtitles.afteros_blaster.force_push",
+    "sounds": [
+      {
+        "name": "afteros_blaster:force_push",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "force_pull": {
+    "subtitle": "subtitles.afteros_blaster.force_pull",
+    "sounds": [
+      {
+        "name": "afteros_blaster:force_pull",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "force_throw": {
+    "subtitle": "subtitles.afteros_blaster.force_throw",
+    "sounds": [
+      {
+        "name": "afteros_blaster:force_throw",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "force_slam": {
+    "subtitle": "subtitles.afteros_blaster.force_slam",
+    "sounds": [
+      {
+        "name": "afteros_blaster:force_slam",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "void_open": {
+    "subtitle": "subtitles.afteros_blaster.void_open",
+    "sounds": [
+      {
+        "name": "afteros_blaster:void_open",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "void_travel": {
+    "subtitle": "subtitles.afteros_blaster.void_travel",
+    "sounds": [
+      {
+        "name": "afteros_blaster:void_travel",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "void_lance": {
+    "subtitle": "subtitles.afteros_blaster.void_lance",
+    "sounds": [
+      {
+        "name": "afteros_blaster:void_lance",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "void_collapse": {
+    "subtitle": "subtitles.afteros_blaster.void_collapse",
+    "sounds": [
+      {
+        "name": "afteros_blaster:void_collapse",
+        "attenuation_distance": 16
+      }
+    ]
   }
 }

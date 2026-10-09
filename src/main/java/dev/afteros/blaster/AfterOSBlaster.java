@@ -2,6 +2,12 @@ package dev.afteros.blaster;
 
 import dev.afteros.blaster.entity.FloatingCrt;
 import dev.afteros.blaster.entity.ImaginarySpace;
+import dev.afteros.blaster.entity.SoulmineOrbit;
+import dev.afteros.blaster.entity.TelekinesisGrip;
+import dev.afteros.blaster.entity.VoidCollapse;
+import dev.afteros.blaster.item.SoulmineBladesItem;
+import dev.afteros.blaster.item.TelekinesisItem;
+import dev.afteros.blaster.item.VoidCoreItem;
 import dev.afteros.blaster.entity.SubspaceLance;
 import dev.afteros.blaster.item.SubspaceLanceItem;
 import dev.afteros.blaster.entity.SignalBeam;
@@ -47,6 +53,13 @@ public class AfterOSBlaster {
     public static final DeferredItem<SubspaceLanceItem> SUBSPACE_LANCE =
             ITEMS.registerItem("subspace_lance", props -> new SubspaceLanceItem(props.stacksTo(1).rarity(Rarity.EPIC)));
 
+    public static final DeferredItem<TelekinesisItem> TELEKINESIS =
+            ITEMS.registerItem("telekinesis", props -> new TelekinesisItem(props.stacksTo(1).rarity(Rarity.EPIC)));
+    public static final DeferredItem<SoulmineBladesItem> SOULMINE_BLADES =
+            ITEMS.registerItem("soulmine_blades", props -> new SoulmineBladesItem(props.stacksTo(1).rarity(Rarity.EPIC)));
+    public static final DeferredItem<VoidCoreItem> VOID_CORE =
+            ITEMS.registerItem("void_core", props -> new VoidCoreItem(props.stacksTo(1).rarity(Rarity.EPIC)));
+
     // ---- entities
     public static final DeferredHolder<EntityType<?>, EntityType<SignalBolt>> SIGNAL_BOLT = ENTITIES.register("signal_bolt",
             () -> EntityType.Builder.<SignalBolt>of(SignalBolt::new, MobCategory.MISC)
@@ -68,12 +81,38 @@ public class AfterOSBlaster {
             () -> EntityType.Builder.<ImaginarySpace>of(ImaginarySpace::new, MobCategory.MISC)
                     .noSave().sized(0.2F, 0.2F).fireImmune().clientTrackingRange(10).updateInterval(20).build("imaginary_space"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<TelekinesisGrip>> TELEKINESIS_GRIP = ENTITIES.register("telekinesis_grip",
+            () -> EntityType.Builder.<TelekinesisGrip>of(TelekinesisGrip::new, MobCategory.MISC)
+                    .noSave().sized(0.2F, 0.2F).fireImmune().clientTrackingRange(10).updateInterval(20).build("telekinesis_grip"));
+    public static final DeferredHolder<EntityType<?>, EntityType<SoulmineOrbit>> SOULMINE_ORBIT = ENTITIES.register("soulmine_orbit",
+            () -> EntityType.Builder.<SoulmineOrbit>of(SoulmineOrbit::new, MobCategory.MISC)
+                    .noSave().sized(0.3F, 0.3F).fireImmune().clientTrackingRange(10).updateInterval(1).build("soulmine_orbit"));
+    public static final DeferredHolder<EntityType<?>, EntityType<VoidCollapse>> VOID_COLLAPSE = ENTITIES.register("void_collapse",
+            () -> EntityType.Builder.<VoidCollapse>of(VoidCollapse::new, MobCategory.MISC)
+                    .noSave().sized(0.2F, 0.2F).fireImmune().clientTrackingRange(12).updateInterval(20).build("void_collapse"));
+
     // ---- sounds (mapped to vanilla sounds in sounds.json)
     public static final DeferredHolder<SoundEvent, SoundEvent> CHARGE = sound("charge");
     public static final DeferredHolder<SoundEvent, SoundEvent> FIRE = sound("fire");
     public static final DeferredHolder<SoundEvent, SoundEvent> IMPACT = sound("impact");
     public static final DeferredHolder<SoundEvent, SoundEvent> BOOM = sound("boom");
     public static final DeferredHolder<SoundEvent, SoundEvent> SUPER_FIRE = sound("super_fire");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CHAIN_SWING = sound("chain_swing");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CHAIN_THROW = sound("chain_throw");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CHAIN_RETURN = sound("chain_return");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SOUL_IMPACT = sound("soul_impact");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SOUL_CHARGE = sound("soul_charge");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SOUL_SLAM = sound("soul_slam");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOCK_LAUNCH = sound("block_launch");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FORCE_GRAB = sound("force_grab");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FORCE_PUSH = sound("force_push");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FORCE_PULL = sound("force_pull");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FORCE_THROW = sound("force_throw");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FORCE_SLAM = sound("force_slam");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOID_OPEN = sound("void_open");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOID_TRAVEL = sound("void_travel");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOID_LANCE = sound("void_lance");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VOID_COLLAPSE_SOUND = sound("void_collapse");
 
     private static DeferredHolder<SoundEvent, SoundEvent> sound(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(id(name)));
@@ -97,6 +136,9 @@ public class AfterOSBlaster {
             event.accept(SUPER_CRT_BLASTER);
             event.accept(FLOATING_CRT);
             event.accept(SUBSPACE_LANCE);
+            event.accept(TELEKINESIS);
+            event.accept(SOULMINE_BLADES);
+            event.accept(VOID_CORE);
             event.accept(PHOSPHOR_CELL);
         }
     }

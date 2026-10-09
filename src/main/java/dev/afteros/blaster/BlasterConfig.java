@@ -57,6 +57,25 @@ public final class BlasterConfig {
     public static final ModConfigSpec.IntValue BARRAGE_COOLDOWN_TICKS;
     public static final ModConfigSpec.IntValue SPACE_COOLDOWN_TICKS;
 
+    // ---- telekinesis / soulmine blades / void core
+    public static final ModConfigSpec.DoubleValue TK_RANGE;
+    public static final ModConfigSpec.DoubleValue TK_PUSH_DAMAGE;
+    public static final ModConfigSpec.DoubleValue TK_THROW_DAMAGE;
+    public static final ModConfigSpec.DoubleValue TK_SLAM_DAMAGE;
+    public static final ModConfigSpec.DoubleValue SOUL_WHIP_DAMAGE;
+    public static final ModConfigSpec.DoubleValue SOUL_WHIP_RANGE;
+    public static final ModConfigSpec.DoubleValue SOUL_SPIN_DAMAGE;
+    public static final ModConfigSpec.DoubleValue SOUL_SPIN_RADIUS;
+    public static final ModConfigSpec.IntValue SOUL_ORBIT_TICKS;
+    public static final ModConfigSpec.DoubleValue SOUL_ORBIT_DAMAGE;
+    public static final ModConfigSpec.IntValue SOUL_ORBIT_COST;
+    public static final ModConfigSpec.DoubleValue VOID_BLINK_RANGE;
+    public static final ModConfigSpec.IntValue VOID_LANCE_COUNT;
+    public static final ModConfigSpec.DoubleValue VOID_COLLAPSE_RADIUS;
+    public static final ModConfigSpec.IntValue VOID_COLLAPSE_TICKS;
+    public static final ModConfigSpec.DoubleValue VOID_COLLAPSE_DAMAGE;
+    public static final ModConfigSpec.IntValue VOID_COLLAPSE_COST;
+
     // ---- overclocked (super) CRT
     public static final ModConfigSpec.DoubleValue SUPER_DAMAGE;
     public static final ModConfigSpec.DoubleValue SUPER_CRATER_RADIUS;
@@ -147,6 +166,32 @@ public final class BlasterConfig {
         LANCE_COOLDOWN_TICKS = b.defineInRange("lanceCooldown", 6, 0, 200);
         BARRAGE_COOLDOWN_TICKS = b.defineInRange("barrageCooldown", 50, 0, 1200);
         SPACE_COOLDOWN_TICKS = b.defineInRange("imaginarySpaceCooldown", 260, 0, 6000);
+        b.pop();
+
+        b.comment("Telekinesis Authority.").push("telekinesis");
+        TK_RANGE = b.defineInRange("range", 24.0D, 4.0D, 64.0D);
+        TK_PUSH_DAMAGE = b.defineInRange("pushDamage", 4.0D, 0.0D, 10000.0D);
+        TK_THROW_DAMAGE = b.defineInRange("throwDamage", 14.0D, 0.0D, 10000.0D);
+        TK_SLAM_DAMAGE = b.defineInRange("slamDamage", 18.0D, 0.0D, 10000.0D);
+        b.pop();
+
+        b.comment("Soulmine Blades.").push("soulmine_blades");
+        SOUL_WHIP_DAMAGE = b.defineInRange("whipDamage", 9.0D, 0.0D, 10000.0D);
+        SOUL_WHIP_RANGE = b.defineInRange("whipRange", 24.0D, 4.0D, 64.0D);
+        SOUL_SPIN_DAMAGE = b.comment("Damage per spin pulse (every half second while held).").defineInRange("spinDamage", 5.0D, 0.0D, 10000.0D);
+        SOUL_SPIN_RADIUS = b.defineInRange("spinRadius", 4.5D, 1.0D, 16.0D);
+        SOUL_ORBIT_TICKS = b.comment("How long the orbiting dual blade rig lasts (900 = 45 seconds).").defineInRange("orbitTicks", 900, 100, 72000);
+        SOUL_ORBIT_DAMAGE = b.defineInRange("orbitDamage", 7.0D, 0.0D, 10000.0D);
+        SOUL_ORBIT_COST = b.comment("Phosphor Cells to summon the rig.").defineInRange("orbitCost", 1, 0, 64);
+        b.pop();
+
+        b.comment("Herrscher Core of the Void.").push("void_core");
+        VOID_BLINK_RANGE = b.defineInRange("blinkRange", 40.0D, 4.0D, 128.0D);
+        VOID_LANCE_COUNT = b.defineInRange("lanceCount", 6, 1, 24);
+        VOID_COLLAPSE_RADIUS = b.defineInRange("collapseRadius", 12.0D, 3.0D, 32.0D);
+        VOID_COLLAPSE_TICKS = b.comment("Ticks the black hole pulls before it detonates.").defineInRange("collapseTicks", 60, 10, 400);
+        VOID_COLLAPSE_DAMAGE = b.defineInRange("collapseDamage", 60.0D, 0.0D, 100000.0D);
+        VOID_COLLAPSE_COST = b.defineInRange("collapseCost", 3, 0, 64);
         b.pop();
 
         b.comment("Overclocked CRT (super blaster).").push("overclocked");

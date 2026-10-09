@@ -18,5 +18,8 @@ public final class ClientEvents {
         event.registerEntityRenderer(AfterOSBlaster.FLOATING_CRT_ENTITY.get(), FloatingCrtRenderer::new);
         event.registerEntityRenderer(AfterOSBlaster.SUBSPACE_LANCE_ENTITY.get(), SubspaceLanceRenderer::new);
         event.registerEntityRenderer(AfterOSBlaster.IMAGINARY_SPACE.get(), NoopRenderer::new);
+        event.registerEntityRenderer(AfterOSBlaster.TELEKINESIS_GRIP.get(), NoopRenderer::new);
+        event.registerEntityRenderer(AfterOSBlaster.VOID_COLLAPSE.get(), NoopRenderer::new);
+        event.registerEntityRenderer(AfterOSBlaster.SOULMINE_ORBIT.get(), SoulmineOrbitRenderer::new);
     }
 }

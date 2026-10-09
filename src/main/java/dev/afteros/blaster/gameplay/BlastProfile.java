@@ -93,6 +93,12 @@ public record BlastProfile(
                 false, false, false);
     }
 
+    /** Flexible profile for the arsenal items (no fire, normal terrain resistance cap). */
+    public static BlastProfile custom(float damage, double damageRadius, double crater, int maxBlocks, int debris, double knockback, boolean big) {
+        return new BlastProfile(damage, damageRadius, crater, 0.0D, maxBlocks, debris,
+                BlasterConfig.MAX_BLAST_RESISTANCE.get().floatValue(), knockback, false, false, big);
+    }
+
     /** Same blast but it never touches terrain (used when the target is right next to the owner). */
     public BlastProfile withoutTerrain() {
         return new BlastProfile(damage, damageRadius, 0.0D, 0.0D, 0, 0, resistanceCap, knockback, oneShot, bosses, big);
