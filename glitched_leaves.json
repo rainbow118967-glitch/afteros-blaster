@@ -1,1 +1,4 @@
-{"variants": {"": {"model": "afteros_crt:block/glitched_leaves"}}}
+{
+ "type": "minecraft:block",
+ "pools": []
+}

@@ -1,1 +1,27 @@
-{"variants": {"": {"model": "afteros_crt:block/corruption_seed"}}}
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "OPO",
+    "PNP",
+    "OCO"
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "P": {
+      "item": "afteros_crt:phosphor_cell"
+    },
+    "N": {
+      "item": "minecraft:nether_star"
+    },
+    "C": {
+      "item": "afteros_crt:crt_corruptor"
+    }
+  },
+  "result": {
+    "id": "afteros_crt:corruption_seed",
+    "count": 1
+  }
+}

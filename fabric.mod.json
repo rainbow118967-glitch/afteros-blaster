@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "afteros_crt",
+  "version": "${version}",
+  "name": "AfterOS // CRT Arsenal (Fabric)",
+  "description": "CRT Blaster, Floating CRT squad, Overclocked CRT and the Subspace Lance. Craters, flying blocks and fire. Fan-made.",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["dev.afteros.crt.AfterOSBlaster"],
+    "client": ["dev.afteros.crt.client.ClientEvents"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "license": "MIT"
+}
