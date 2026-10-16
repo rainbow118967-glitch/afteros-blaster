@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "APA",
+    "PBP",
+    "ACA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "P": {
+      "item": "afteros_blaster:phosphor_cell"
+    },
+    "B": {
+      "item": "afteros_blaster:crt_blaster"
+    },
+    "C": {
+      "item": "minecraft:echo_shard"
+    }
+  },
+  "result": {
+    "id": "afteros_blaster:crt_corruptor",
+    "count": 1
+  }
+}

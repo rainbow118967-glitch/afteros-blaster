@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "OPO",
+    "PNP",
+    "OCO"
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "P": {
+      "item": "afteros_blaster:phosphor_cell"
+    },
+    "N": {
+      "item": "minecraft:nether_star"
+    },
+    "C": {
+      "item": "afteros_blaster:crt_corruptor"
+    }
+  },
+  "result": {
+    "id": "afteros_blaster:corruption_seed",
+    "count": 1
+  }
+}

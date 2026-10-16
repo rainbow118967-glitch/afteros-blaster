@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "BPB",
+    "PNP",
+    "BPB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:blaze_rod"
+    },
+    "P": {
+      "item": "afteros_blaster:phosphor_cell"
+    },
+    "N": {
+      "item": "minecraft:nether_star"
+    }
+  },
+  "result": {
+    "id": "afteros_blaster:flame_core",
+    "count": 1
+  }
+}
