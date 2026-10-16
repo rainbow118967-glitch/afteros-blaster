@@ -24,7 +24,7 @@ import net.minecraft.world.level.entity.EntityTypeTest;
 public class FloatingCrtItem extends Item {
     private static final String MODE_KEY = "afteros_drone_mode";
     private static final String[] MODE_NAMES = {
-            "mode.afteros_blaster.drone_guard", "mode.afteros_blaster.drone_hunt", "mode.afteros_blaster.drone_hold"};
+            "mode.afteros_blaster.drone_guard", "mode.afteros_blaster.drone_hunt", "mode.afteros_blaster.drone_hold", "mode.afteros_blaster.drone_corrupt"};
 
     public FloatingCrtItem(Item.Properties properties) {
         super(properties);
@@ -34,40 +34,67 @@ public class FloatingCrtItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (level instanceof ServerLevel server && player instanceof ServerPlayer owner) {
-            List<? extends FloatingCrt> mine = server.getEntities(EntityTypeTest.forClass(FloatingCrt.class),
-                    d -> d.getOwner() != null && d.getOwner().getUUID().equals(owner.getUUID()));
-            int stored = storedMode(stack);
-            int mode = stored >= 0 ? stored : (BlasterConfig.DRONE_TARGET_PASSIVE.get() ? 1 : 0);
-            if (owner.isShiftKeyDown()) { // cycle Guard -> Hunt -> Hold fire, live on deployed drones too
-                int next = (mode + 1) % 3;
-                CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(MODE_KEY, next));
-                mine.forEach(d -> d.setMode(next));
-                owner.displayClientMessage(Component.translatable("message.afteros_blaster.drone_mode",
-                        Component.translatable(MODE_NAMES[next])), true);
+            if (owner.isShiftKeyDown()) { // cycle Guard -> Hunt -> Hold fire -> Corrupt, live on deployed drones too
+                cycleMode(server, owner, stack);
                 return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
             }
-            if (!mine.isEmpty()) {
-                mine.forEach(Entity::discard);
-                owner.displayClientMessage(Component.translatable("message.afteros_blaster.drone_recalled"), true);
-            } else {
-                if (!CrtBlasterItem.consumeCells(owner, 1, BlasterConfig.DRONE_REQUIRE_AMMO.get())) {
-                    owner.displayClientMessage(Component.translatable("message.afteros_blaster.no_ammo"), true);
-                    return InteractionResultHolder.fail(stack);
-                }
-                int squad = BlasterConfig.DRONE_COUNT.get();
-                for (int i = 0; i < squad; i++) {
-                    server.addFreshEntity(FloatingCrt.deploy(server, owner, i, squad, mode));
-                }
-                owner.displayClientMessage(Component.translatable("message.afteros_blaster.drone_deployed"), true);
+            if (!drones(server, owner).isEmpty()) {
+                recall(server, owner);
+            } else if (!deploy(server, owner, stack)) {
+                return InteractionResultHolder.fail(stack);
             }
             owner.getCooldowns().addCooldown(this, 20);
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 
+    /** The owner's deployed Floating CRTs. */
+    public static List<? extends FloatingCrt> drones(ServerLevel server, ServerPlayer owner) {
+        return server.getEntities(EntityTypeTest.forClass(FloatingCrt.class),
+                d -> d.getOwner() != null && d.getOwner().getUUID().equals(owner.getUUID()));
+    }
+
+    /** Dismisses the squad. Returns false if none was out. */
+    public static boolean recall(ServerLevel server, ServerPlayer owner) {
+        List<? extends FloatingCrt> mine = drones(server, owner);
+        if (mine.isEmpty()) {
+            return false;
+        }
+        mine.forEach(Entity::discard);
+        owner.displayClientMessage(Component.translatable("message.afteros_blaster.drone_recalled"), true);
+        return true;
+    }
+
+    /** Spends a Phosphor Cell and deploys the squad using the mode stored on the stack. */
+    public static boolean deploy(ServerLevel server, ServerPlayer owner, ItemStack stack) {
+        if (!CrtBlasterItem.consumeCells(owner, 1, BlasterConfig.DRONE_REQUIRE_AMMO.get())) {
+            owner.displayClientMessage(Component.translatable("message.afteros_blaster.no_ammo"), true);
+            return false;
+        }
+        int stored = storedMode(stack);
+        int mode = stored >= 0 ? stored : (BlasterConfig.DRONE_TARGET_PASSIVE.get() ? 1 : 0);
+        int squad = BlasterConfig.DRONE_COUNT.get();
+        for (int i = 0; i < squad; i++) {
+            server.addFreshEntity(FloatingCrt.deploy(server, owner, i, squad, mode));
+        }
+        owner.displayClientMessage(Component.translatable("message.afteros_blaster.drone_deployed"), true);
+        return true;
+    }
+
+    /** Guard -> Hunt -> Hold fire -> Corrupt. Applies to deployed drones immediately. */
+    public static void cycleMode(ServerLevel server, ServerPlayer owner, ItemStack stack) {
+        int stored = storedMode(stack);
+        int mode = stored >= 0 ? stored : (BlasterConfig.DRONE_TARGET_PASSIVE.get() ? 1 : 0);
+        int next = (mode + 1) % 4;
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(MODE_KEY, next));
+        drones(server, owner).forEach(d -> d.setMode(next));
+        owner.displayClientMessage(Component.translatable("message.afteros_blaster.drone_mode",
+                Component.translatable(MODE_NAMES[next])), true);
+    }
+
     private static int storedMode(ItemStack stack) {
         var tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        return tag.contains(MODE_KEY) ? Mth.clamp(tag.getInt(MODE_KEY), 0, 2) : -1;
+        return tag.contains(MODE_KEY) ? Mth.clamp(tag.getInt(MODE_KEY), 0, 3) : -1;
     }
 
     @Override

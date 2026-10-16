@@ -1,0 +1,1 @@
+{"variants": {"axis=y": {"model": "afteros_blaster:block/corrupted_log"}, "axis=z": {"model": "afteros_blaster:block/corrupted_log", "x": 90}, "axis=x": {"model": "afteros_blaster:block/corrupted_log", "x": 90, "y": 90}}}

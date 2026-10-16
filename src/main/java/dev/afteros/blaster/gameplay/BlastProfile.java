@@ -99,6 +99,26 @@ public record BlastProfile(
                 BlasterConfig.MAX_BLAST_RESISTANCE.get().floatValue(), knockback, false, false, big);
     }
 
+    /** A Subspace Lance carrying Flame (Void Core + Flame Core resonance): bigger, hotter, sets the ground alight. */
+    public static BlastProfile flameLance() {
+        double crater = BlasterConfig.LANCE_CRATER_RADIUS.get() * 1.7D;
+        return new BlastProfile(
+                (float) (BlasterConfig.LANCE_DAMAGE.get() * 1.6D),
+                crater * 1.8D + 1.0D,
+                crater,
+                0.7D,
+                500,
+                28,
+                BlasterConfig.MAX_BLAST_RESISTANCE.get().floatValue(),
+                BlasterConfig.KNOCKBACK.get() * 0.9D,
+                false, false, false);
+    }
+
+    /** Pure heat: damage plus burning and knockback, no terrain. */
+    public static BlastProfile thermal(float damage, double knockback) {
+        return new BlastProfile(damage, 0.0D, 0.0D, 1.0D, 0, 0, 0.0F, knockback, false, false, false);
+    }
+
     /** Same blast but it never touches terrain (used when the target is right next to the owner). */
     public BlastProfile withoutTerrain() {
         return new BlastProfile(damage, damageRadius, 0.0D, 0.0D, 0, 0, resistanceCap, knockback, oneShot, bosses, big);
