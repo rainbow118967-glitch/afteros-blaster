@@ -1,0 +1,1 @@
+{"variants": {"axis=y": {"model": "afteros_crt:block/corrupted_log"}, "axis=z": {"model": "afteros_crt:block/corrupted_log", "x": 90}, "axis=x": {"model": "afteros_crt:block/corrupted_log", "x": 90, "y": 90}}}

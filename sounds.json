@@ -1,0 +1,221 @@
+{
+  "charge": {
+    "subtitle": "subtitles.afteros_crt.charge",
+    "sounds": [
+      {
+        "name": "minecraft:block.respawn_anchor.charge",
+        "type": "event",
+        "volume": 0.65,
+        "pitch": 1.5
+      }
+    ]
+  },
+  "fire": {
+    "subtitle": "subtitles.afteros_crt.fire",
+    "sounds": [
+      {
+        "name": "minecraft:entity.warden.sonic_boom",
+        "type": "event",
+        "volume": 0.9,
+        "pitch": 1.4
+      }
+    ]
+  },
+  "impact": {
+    "subtitle": "subtitles.afteros_crt.impact",
+    "sounds": [
+      {
+        "name": "minecraft:block.amethyst_block.break",
+        "type": "event",
+        "volume": 1.0,
+        "pitch": 0.6
+      },
+      {
+        "name": "minecraft:block.glass.break",
+        "type": "event",
+        "volume": 0.75,
+        "pitch": 0.7
+      }
+    ]
+  },
+  "debris_hiss": {
+    "subtitle": "subtitles.afteros_crt.debris_hiss",
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.power_select",
+        "type": "event",
+        "volume": 0.35,
+        "pitch": 1.8
+      }
+    ]
+  },
+  "boom": {
+    "subtitle": "subtitles.afteros_crt.boom",
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.explode",
+        "type": "event",
+        "volume": 1.0,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "super_fire": {
+    "subtitle": "subtitles.afteros_crt.fire",
+    "sounds": [
+      {
+        "name": "minecraft:entity.warden.sonic_boom",
+        "type": "event",
+        "volume": 1.0,
+        "pitch": 0.6
+      },
+      {
+        "name": "minecraft:entity.lightning_bolt.thunder",
+        "type": "event",
+        "volume": 0.8,
+        "pitch": 1.2
+      }
+    ]
+  },
+  "chain_swing": {
+    "subtitle": "subtitles.afteros_crt.chain_swing",
+    "sounds": [
+      {
+        "name": "afteros_crt:chain_swing",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "chain_throw": {
+    "subtitle": "subtitles.afteros_crt.chain_throw",
+    "sounds": [
+      {
+        "name": "afteros_crt:chain_throw",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "chain_return": {
+    "subtitle": "subtitles.afteros_crt.chain_return",
+    "sounds": [
+      {
+        "name": "afteros_crt:chain_return",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "soul_impact": {
+    "subtitle": "subtitles.afteros_crt.soul_impact",
+    "sounds": [
+      "afteros_crt:soul_impact"
+    ]
+  },
+  "soul_charge": {
+    "subtitle": "subtitles.afteros_crt.soul_charge",
+    "sounds": [
+      {
+        "name": "afteros_crt:soul_charge",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "soul_slam": {
+    "subtitle": "subtitles.afteros_crt.soul_slam",
+    "sounds": [
+      {
+        "name": "afteros_crt:soul_slam",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "block_launch": {
+    "subtitle": "subtitles.afteros_crt.block_launch",
+    "sounds": [
+      {
+        "name": "afteros_crt:block_launch",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "force_grab": {
+    "subtitle": "subtitles.afteros_crt.force_grab",
+    "sounds": [
+      {
+        "name": "afteros_crt:force_grab",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "force_push": {
+    "subtitle": "subtitles.afteros_crt.force_push",
+    "sounds": [
+      {
+        "name": "afteros_crt:force_push",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "force_pull": {
+    "subtitle": "subtitles.afteros_crt.force_pull",
+    "sounds": [
+      {
+        "name": "afteros_crt:force_pull",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "force_throw": {
+    "subtitle": "subtitles.afteros_crt.force_throw",
+    "sounds": [
+      {
+        "name": "afteros_crt:force_throw",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "force_slam": {
+    "subtitle": "subtitles.afteros_crt.force_slam",
+    "sounds": [
+      {
+        "name": "afteros_crt:force_slam",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "void_open": {
+    "subtitle": "subtitles.afteros_crt.void_open",
+    "sounds": [
+      {
+        "name": "afteros_crt:void_open",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "void_travel": {
+    "subtitle": "subtitles.afteros_crt.void_travel",
+    "sounds": [
+      {
+        "name": "afteros_crt:void_travel",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "void_lance": {
+    "subtitle": "subtitles.afteros_crt.void_lance",
+    "sounds": [
+      {
+        "name": "afteros_crt:void_lance",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "void_collapse": {
+    "subtitle": "subtitles.afteros_crt.void_collapse",
+    "sounds": [
+      {
+        "name": "afteros_crt:void_collapse",
+        "attenuation_distance": 16
+      }
+    ]
+  }
+}
