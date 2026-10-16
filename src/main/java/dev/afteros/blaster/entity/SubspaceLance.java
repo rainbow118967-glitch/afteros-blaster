@@ -32,6 +32,9 @@ public class SubspaceLance extends Projectile {
     // server-only
     private int delay;
     private Vec3 launch = Vec3.ZERO;
+    private Vec3 aimTarget = Vec3.ZERO;
+    private boolean flame; // Herrscher Resonance: Void lances carrying Flame
+    private boolean phase; // incorporeal: passes through everything, then solidifies and detonates on the target
 
     public SubspaceLance(EntityType<? extends SubspaceLance> type, Level level) {
         super(type, level);
@@ -55,6 +58,23 @@ public class SubspaceLance extends Projectile {
         lance.setDeltaMovement(lance.launch);
         lance.aim();
         level.sendParticles(ParticleTypes.REVERSE_PORTAL, start.x, start.y, start.z, 14, 0.2D, 0.2D, 0.2D, 0.1D);
+        return lance;
+    }
+
+    public SubspaceLance flaming() {
+        this.flame = true;
+        return this;
+    }
+
+    /** Fired out of a Void portal at the target. Incorporeal until it reaches the target, where it solidifies and explodes. */
+    public static SubspaceLance fromPortal(ServerLevel level, LivingEntity owner, Vec3 portalPos, Vec3 target, int delay) {
+        SubspaceLance lance = new SubspaceLance(AfterOSBlaster.SUBSPACE_LANCE_ENTITY.get(), level);
+        lance.setOwner(owner);
+        lance.delay = Math.max(1, delay);
+        lance.setPos(portalPos);
+        lance.launch = target.subtract(portalPos).normalize().scale(2.4D);
+        lance.aimTarget = target;
+        lance.phase = true;
         return lance;
     }
 
@@ -121,6 +141,16 @@ public class SubspaceLance extends Projectile {
             this.discard();
             return;
         }
+        if (this.phase) {
+            Vec3 m = this.getDeltaMovement();
+            if (this.position().distanceToSqr(this.aimTarget) <= m.lengthSqr() * 1.5D) {
+                detonate(server, this.aimTarget);
+                return;
+            }
+            this.setPos(getX() + m.x, getY() + m.y, getZ() + m.z);
+            this.aim();
+            return;
+        }
         HitResult hit = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
         if (hit.getType() != HitResult.Type.MISS) {
             detonate(server, hit.getLocation());
@@ -135,7 +165,7 @@ public class SubspaceLance extends Projectile {
         LivingEntity owner = this.getOwner() instanceof LivingEntity living ? living : null;
         Vec3 dir = this.getDeltaMovement();
         Vec3 center = dir.lengthSqr() > 1.0E-6D ? at.subtract(dir.normalize().scale(0.15D)) : at;
-        ImpactEffects.blast(server, center, owner, this, BlastProfile.lance(isCore()));
+        ImpactEffects.blast(server, center, owner, this, this.flame ? BlastProfile.flameLance() : BlastProfile.lance(isCore()));
         int n = isCore() ? 60 : 24;
         server.sendParticles(ParticleTypes.PORTAL, center.x, center.y + 0.5D, center.z, n, 0.8D, 0.8D, 0.8D, 0.6D);
         server.sendParticles(ParticleTypes.REVERSE_PORTAL, center.x, center.y + 0.5D, center.z, n, 0.6D, 0.6D, 0.6D, 0.2D);

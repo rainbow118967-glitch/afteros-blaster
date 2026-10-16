@@ -57,6 +57,25 @@ public final class BlasterConfig {
     public static final ModConfigSpec.IntValue BARRAGE_COOLDOWN_TICKS;
     public static final ModConfigSpec.IntValue SPACE_COOLDOWN_TICKS;
 
+    // ---- world corruption
+    public static final ModConfigSpec.BooleanValue CORRUPTION_ENABLED;
+    public static final ModConfigSpec.IntValue CORRUPTION_MAX_RADIUS;
+    public static final ModConfigSpec.IntValue CORRUPTION_BLOCKS_PER_TICK;
+    public static final ModConfigSpec.IntValue CORRUPTION_WAVE_DELAY;
+    public static final ModConfigSpec.IntValue CORRUPTION_CREEP_SECONDS;
+    public static final ModConfigSpec.IntValue CORRUPTION_MAX_FRONTS;
+    public static final ModConfigSpec.IntValue CORRUPTION_MAX_BLOCKS;
+    public static final ModConfigSpec.BooleanValue CORRUPTION_MOB_EFFECTS;
+    public static final ModConfigSpec.BooleanValue CORRUPT_PLAYERS;
+    public static final ModConfigSpec.IntValue RESTORE_RADIUS;
+    public static final ModConfigSpec.IntValue SEED_SECONDS;
+    public static final ModConfigSpec.IntValue SEED_RADIUS;
+    public static final ModConfigSpec.IntValue SEED_MAX_BLOCKS;
+    public static final ModConfigSpec.BooleanValue VIRUS_ENABLED;
+    public static final ModConfigSpec.IntValue VIRUS_SECONDS;
+    public static final ModConfigSpec.DoubleValue VIRUS_CHANCE;
+    public static final ModConfigSpec.DoubleValue VIRUS_RANGE;
+
     // ---- telekinesis / soulmine blades / void core
     public static final ModConfigSpec.DoubleValue TK_RANGE;
     public static final ModConfigSpec.DoubleValue TK_PUSH_DAMAGE;
@@ -71,6 +90,15 @@ public final class BlasterConfig {
     public static final ModConfigSpec.IntValue SOUL_ORBIT_COST;
     public static final ModConfigSpec.DoubleValue VOID_BLINK_RANGE;
     public static final ModConfigSpec.IntValue VOID_LANCE_COUNT;
+    public static final ModConfigSpec.BooleanValue THERMAL_ENABLED;
+    public static final ModConfigSpec.IntValue NUKE_RADIUS;
+    public static final ModConfigSpec.IntValue NUKE_SECONDS;
+    public static final ModConfigSpec.IntValue THERMAL_MAX_BLOCKS;
+    public static final ModConfigSpec.IntValue THERMAL_PER_TICK;
+    public static final ModConfigSpec.DoubleValue VOID_REGEN;
+    public static final ModConfigSpec.IntValue VOID_PORTAL_SECONDS;
+    public static final ModConfigSpec.IntValue VOID_PORTAL_MAX;
+    public static final ModConfigSpec.IntValue VOID_CRYSTAL_HEIGHT;
     public static final ModConfigSpec.DoubleValue VOID_COLLAPSE_RADIUS;
     public static final ModConfigSpec.IntValue VOID_COLLAPSE_TICKS;
     public static final ModConfigSpec.DoubleValue VOID_COLLAPSE_DAMAGE;
@@ -168,6 +196,31 @@ public final class BlasterConfig {
         SPACE_COOLDOWN_TICKS = b.defineInRange("imaginarySpaceCooldown", 260, 0, 6000);
         b.pop();
 
+        b.comment("World corruption: the CRT Corruptor (and Floating CRTs in Corrupt mode) overwrite terrain. Original blocks are remembered "
+                + "and can be put back with the Restoration Tool or /afteros restore. Bedrock and block entities are never touched.").push("corruption");
+        CORRUPTION_ENABLED = b.comment("Master switch for all corruption.").define("enabled", true);
+        CORRUPTION_MAX_RADIUS = b.comment("Largest radius a wave can have (a full charge asks for 25).").defineInRange("maxRadius", 25, 1, 64);
+        CORRUPTION_BLOCKS_PER_TICK = b.comment("Per-tick limit on blocks changed by one wave. Lower = slower spread, less lag.")
+                .defineInRange("blocksPerTick", 200, 10, 2000);
+        CORRUPTION_WAVE_DELAY = b.comment("Ticks between rings of the wave.").defineInRange("waveDelayTicks", 2, 0, 40);
+        CORRUPTION_CREEP_SECONDS = b.comment("After the main wave, corrupted blocks keep infecting neighbours for this long. 0 = no continuous spreading.")
+                .defineInRange("creepSeconds", 8, 0, 120);
+        CORRUPTION_MAX_FRONTS = b.comment("Most corruption waves active at once.").defineInRange("maxActiveFronts", 24, 1, 200);
+        CORRUPTION_MAX_BLOCKS = b.comment("Hard cap of blocks one wave may change.").defineInRange("maxBlocksPerFront", 30000, 100, 500000);
+        CORRUPTION_MOB_EFFECTS = b.comment("Corrupted ground slows and hurts mobs; mobs on it glow and hit harder.").define("mobEffects", true);
+        CORRUPT_PLAYERS = b.comment("If false (default) players are immune to corrupted ground.").define("corruptPlayers", false);
+        RESTORE_RADIUS = b.comment("Restoration Tool radius (x3 while sneaking).").defineInRange("restoreRadius", 20, 4, 128);
+        SEED_SECONDS = b.comment("Corruption Seed: how long the whole wave takes (300 = five minutes).").defineInRange("seedSeconds", 300, 10, 3600);
+        SEED_RADIUS = b.comment("Corruption Seed: how far the wave spreads (only loaded chunks are changed).").defineInRange("seedRadius", 96, 8, 256);
+        SEED_MAX_BLOCKS = b.comment("Corruption Seed: hard cap of blocks it may change.").defineInRange("seedMaxBlocks", 500000, 1000, 5000000);
+        VIRUS_ENABLED = b.comment("Data Corruption infection: infected creatures leave corrupted ground and infect others nearby.").define("virusEnabled", true);
+        VIRUS_SECONDS = b.comment("How long an infection lasts. Infecting others restarts the clock for them, so it can keep going in a crowd.")
+                .defineInRange("virusSeconds", 30, 5, 600);
+        VIRUS_CHANCE = b.comment("Chance per half second that an infected creature infects each other creature in range.")
+                .defineInRange("virusSpreadChance", 0.35D, 0.0D, 1.0D);
+        VIRUS_RANGE = b.defineInRange("virusRange", 3.5D, 1.0D, 12.0D);
+        b.pop();
+
         b.comment("Telekinesis Authority.").push("telekinesis");
         TK_RANGE = b.defineInRange("range", 24.0D, 4.0D, 64.0D);
         TK_PUSH_DAMAGE = b.defineInRange("pushDamage", 4.0D, 0.0D, 10000.0D);
@@ -185,9 +238,21 @@ public final class BlasterConfig {
         SOUL_ORBIT_COST = b.comment("Phosphor Cells to summon the rig.").defineInRange("orbitCost", 1, 0, 64);
         b.pop();
 
+        b.comment("Herrscher Core of Flame (Gem of Destruction). Thermal terrain changes are permanent; bedrock and block entities are never touched.").push("flame_core");
+        THERMAL_ENABLED = b.comment("Master switch for terrain melting / vaporizing (Heat Lance and Nuclear Flare).").define("thermalEnabled", true);
+        NUKE_RADIUS = b.comment("Nuclear Flare radius in blocks.").defineInRange("nukeRadius", 24, 6, 48);
+        NUKE_SECONDS = b.comment("How long the fireball takes to expand to full size.").defineInRange("nukeSeconds", 4, 2, 30);
+        THERMAL_MAX_BLOCKS = b.comment("Hard cap of blocks one thermal explosion may change.").defineInRange("thermalMaxBlocks", 150000, 1000, 2000000);
+        THERMAL_PER_TICK = b.comment("Blocks changed per tick (raised automatically to keep the schedule, capped at 4000).").defineInRange("thermalBlocksPerTick", 1500, 100, 4000);
+        b.pop();
+
         b.comment("Herrscher Core of the Void.").push("void_core");
         VOID_BLINK_RANGE = b.defineInRange("blinkRange", 40.0D, 4.0D, 128.0D);
-        VOID_LANCE_COUNT = b.defineInRange("lanceCount", 6, 1, 24);
+        VOID_LANCE_COUNT = b.comment("Portals (and lances) opened by Portal Lances. Hundreds are possible but heavy.").defineInRange("lanceCount", 16, 1, 200);
+        VOID_REGEN = b.comment("Honkai energy the Core absorbs per second (max 100). Holding it adds more.").defineInRange("energyRegenPerSecond", 6.0D, 0.0D, 100.0D);
+        VOID_PORTAL_SECONDS = b.comment("How long a Portal Gate stays open.").defineInRange("portalSeconds", 30, 5, 600);
+        VOID_PORTAL_MAX = b.comment("Most linked portals one player can keep open.").defineInRange("maxPortals", 12, 2, 100);
+        VOID_CRYSTAL_HEIGHT = b.comment("Height of the tallest Void Crystal (blocks, max 40).").defineInRange("crystalHeight", 24, 4, 40);
         VOID_COLLAPSE_RADIUS = b.defineInRange("collapseRadius", 12.0D, 3.0D, 32.0D);
         VOID_COLLAPSE_TICKS = b.comment("Ticks the black hole pulls before it detonates.").defineInRange("collapseTicks", 60, 10, 400);
         VOID_COLLAPSE_DAMAGE = b.defineInRange("collapseDamage", 60.0D, 0.0D, 100000.0D);

@@ -4,6 +4,7 @@ import dev.afteros.blaster.AfterOSBlaster;
 import dev.afteros.blaster.BlasterConfig;
 import dev.afteros.blaster.gameplay.BlastProfile;
 import dev.afteros.blaster.gameplay.ImpactEffects;
+import dev.afteros.blaster.gameplay.Virus;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -42,6 +43,7 @@ public class SignalBeam extends Projectile {
     // server-only state
     private boolean visualOnly;
     private boolean superBeam;
+    private int corruptRadius;
 
     public SignalBeam(EntityType<? extends SignalBeam> type, Level level) {
         super(type, level);
@@ -99,7 +101,17 @@ public class SignalBeam extends Projectile {
         return this.entityData.get(POWER);
     }
 
-    /** 0 = cyan, 1 = overclocked (red), 2 = floating CRT (green). */
+    public void setStyle(int style) {
+        this.entityData.set(STYLE, style);
+    }
+
+    /** Makes the spot where this beam lands start a corruption wave of the given radius. */
+    public SignalBeam withCorruption(int radius) {
+        this.corruptRadius = radius;
+        return this;
+    }
+
+    /** 0 = cyan, 1 = overclocked (red), 2 = floating CRT (green), 3 = corruption (pink). */
     public int getStyle() {
         return this.entityData.get(STYLE);
     }
@@ -151,7 +163,10 @@ public class SignalBeam extends Projectile {
             return;
         }
 
-        BlastProfile profile = this.superBeam ? BlastProfile.superBlast() : BlastProfile.beamPulse(getPower());
+        BlastProfile profile = this.superBeam ? BlastProfile.superBlast()
+                : this.corruptRadius > 0
+                        ? BlastProfile.custom(BlasterConfig.DAMAGE.get().floatValue() * 0.5F, 6.0D, 2.4D, 350, 28, 1.0D, false)
+                        : BlastProfile.beamPulse(getPower());
         double width = this.superBeam ? 2.4D : 0.9D + 0.4D * getPower();
 
         // everything standing in the beam
@@ -160,12 +175,18 @@ public class SignalBeam extends Projectile {
             Vec3 c = target.getBoundingBox().getCenter();
             if (distanceToSegment(c, start, end) <= width + target.getBbWidth() * 0.5D) {
                 ImpactEffects.strike(server, owner, target, profile, start, 1.0D);
+                if (this.corruptRadius > 0 && target.isAlive()) {
+                    Virus.infect(target);
+                }
             }
         }
 
         // the ground where it lands
         if (blockHit && server.hasChunkAt(hit.getBlockPos())) {
             ImpactEffects.blast(server, end.subtract(look.scale(0.1D)), owner, this, profile);
+            if (this.corruptRadius > 0) {
+                CorruptionFront.start(server, end, this.corruptRadius, false);
+            }
             if (this.superBeam && ((this.tickCount - 1) / interval) % 2 == 0 && BlasterConfig.SUPER_LIGHTNING.get()) {
                 ImpactEffects.flash(server, end);
             }

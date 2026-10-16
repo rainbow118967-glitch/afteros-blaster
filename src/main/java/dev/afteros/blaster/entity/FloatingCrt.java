@@ -4,6 +4,7 @@ import dev.afteros.blaster.AfterOSBlaster;
 import dev.afteros.blaster.BlasterConfig;
 import dev.afteros.blaster.gameplay.BlastProfile;
 import dev.afteros.blaster.gameplay.ImpactEffects;
+import dev.afteros.blaster.gameplay.Virus;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -242,6 +243,10 @@ public class FloatingCrt extends Projectile {
         ImpactEffects.blast(server, target.position().add(0.0D, 0.05D, 0.0D), owner, this, profile);
 
         server.playSound(null, this.getX(), this.getY(), this.getZ(), AfterOSBlaster.FIRE.get(), SoundSource.PLAYERS, 0.9F, 1.5F);
+        if (this.mode == 3) { // Corrupt mode: every shot also starts a small corruption wave (zones from many drones merge)
+            CorruptionFront.start(server, target.position(), 5, false);
+            Virus.infect(target);
+        }
         this.entityData.set(FIRE_AGE, 0);
         this.engagePoint = target.position();
         this.engageTicks = 20;

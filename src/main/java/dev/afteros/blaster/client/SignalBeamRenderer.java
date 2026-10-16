@@ -21,7 +21,8 @@ public class SignalBeamRenderer extends EntityRenderer<SignalBeam> {
     private static final ResourceLocation[] TEXTURES = {
             AfterOSBlaster.id("textures/entity/signal_beam.png"),
             AfterOSBlaster.id("textures/entity/signal_beam_super.png"),
-            AfterOSBlaster.id("textures/entity/signal_beam_drone.png")};
+            AfterOSBlaster.id("textures/entity/signal_beam_drone.png"),
+            AfterOSBlaster.id("textures/entity/signal_beam_corrupt.png")};
 
     private static ResourceLocation textureFor(SignalBeam beam) {
         return TEXTURES[Mth.clamp(beam.getStyle(), 0, TEXTURES.length - 1)];

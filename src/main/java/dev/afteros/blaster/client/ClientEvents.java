@@ -21,5 +21,11 @@ public final class ClientEvents {
         event.registerEntityRenderer(AfterOSBlaster.TELEKINESIS_GRIP.get(), NoopRenderer::new);
         event.registerEntityRenderer(AfterOSBlaster.VOID_COLLAPSE.get(), NoopRenderer::new);
         event.registerEntityRenderer(AfterOSBlaster.SOULMINE_ORBIT.get(), SoulmineOrbitRenderer::new);
+        event.registerEntityRenderer(AfterOSBlaster.CORRUPTION_FRONT.get(), NoopRenderer::new);
+        event.registerEntityRenderer(AfterOSBlaster.VOID_PORTAL.get(), VoidPortalRenderer::new);
+        event.registerEntityRenderer(AfterOSBlaster.VOID_WALKER.get(), NoopRenderer::new);
+        event.registerEntityRenderer(AfterOSBlaster.VOID_CRYSTAL.get(), NoopRenderer::new);
+        event.registerEntityRenderer(AfterOSBlaster.FLAME_AURA.get(), NoopRenderer::new);
+        event.registerEntityRenderer(AfterOSBlaster.THERMAL_FRONT.get(), NoopRenderer::new);
     }
 }
