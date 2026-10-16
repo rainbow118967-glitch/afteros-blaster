@@ -1,0 +1,1 @@
+{"parent": "minecraft:block/cube_column", "textures": {"end": "afteros_blaster:block/corrupted_log_end", "side": "afteros_blaster:block/corrupted_log_side"}}
